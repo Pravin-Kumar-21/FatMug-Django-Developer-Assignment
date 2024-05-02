@@ -2,10 +2,11 @@ from rest_framework import serializers
 from .models import Vendor
 
 
-class VendorSerializer(serializers.ModelSerializer):
+class Vendor_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
-        feilds = [
+        fields = [
+            "pk",
             "name",
             "contact_details",
             "address",
@@ -14,3 +15,6 @@ class VendorSerializer(serializers.ModelSerializer):
             "average_respose_time",
             "fulfillment_rate",
         ]
+
+    def get_name(self, obj):
+        return self.name

@@ -9,7 +9,6 @@ from rest_framework.response import responses, Response
 @api_view(["GET"])
 def purchase_order_list(request, *args, **kwargs):
     instance = Purchase.objects.all()
-    data = {}
     if instance:
-        data = Purchase_Serializer(instance).data
+        data = Purchase_Serializer(instance, many=True).data
     return Response(data)

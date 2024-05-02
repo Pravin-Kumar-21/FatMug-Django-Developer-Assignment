@@ -16,7 +16,9 @@ class Purchase(models.Model):
     po_number = models.CharField(
         max_length=100, null=False, verbose_name="Unique Product Order No"
     )
-    vendor = models.ForeignKey(vendor_models.Vendor, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(
+        vendor_models.Vendor, related_name="purchase", on_delete=models.CASCADE
+    )
     order_date = models.DateTimeField(
         blank=False,
         null=False,
@@ -30,13 +32,23 @@ class Purchase(models.Model):
         auto_now_add=False,
         verbose_name="Expected Delivery Date",
     )
-    items = models.JSONField()
     quantity = models.IntegerField(blank=False, null=False)
     status = models.CharField(
         max_length=100,
         blank=False,
         choices=status_choices,
     )
+
+    def json_data(self):
+        return {
+            "Order No": self.po_number,
+            "Vendor Name": self.vendor,
+            "Order Date": self.order_date,
+            "Quantity": self.quantity,
+            "Delivery Date": self.delivery_date,
+        }
+
+    items = models.JSONField(default=dict, null=True, blank=True)
     quality_rating = models.FloatField(
         null=True,
         validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],
@@ -46,4 +58,7 @@ class Purchase(models.Model):
         auto_now=True,
         auto_now_add=False,
     )
-    acknowledgement_date = models.DateField(blank=True, auto_now_add=True, null=True)
+    acknowledgement_date = models.DateField(blank=True, auto_now_add=False, null=True)
+
+    def __str__(self):
+        return self.po_number
