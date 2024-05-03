@@ -17,7 +17,10 @@ class Purchase(models.Model):
         max_length=100, null=False, verbose_name="Unique Product Order No"
     )
     vendor = models.ForeignKey(
-        vendor_models.Vendor, related_name="purchase", on_delete=models.CASCADE
+        vendor_models.Vendor,
+        related_name="purchase",
+        on_delete=models.SET_NULL,
+        null=True,
     )
     order_date = models.DateTimeField(
         blank=False,

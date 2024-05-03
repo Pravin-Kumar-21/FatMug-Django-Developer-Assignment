@@ -8,12 +8,13 @@ class Vendor_Serializer(serializers.ModelSerializer):
         fields = [
             "pk",
             "name",
+            "vendor_code",
             "contact_details",
             "address",
-            "on_time_delivery_rate",
-            "quality_rating_avg",
-            "average_respose_time",
-            "fulfillment_rate",
+            # "on_time_delivery_rate",
+            # "quality_rating_avg",
+            # "average_respose_time",
+            # "fulfillment_rate",
         ]
 
     def get_name(self, obj):

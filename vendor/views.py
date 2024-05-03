@@ -15,7 +15,17 @@ class VendorListCreateAPIView(generics.ListCreateAPIView):
         return super().perform_create(serializer)
 
 
-class VendorDetailApiView(generics.RetrieveAPIView):
+class VendorDetailApiView(
+    generics.RetrieveAPIView,
+    generics.RetrieveUpdateAPIView,
+    generics.DestroyAPIView,
+):
     queryset = Vendor.objects.all()
     serializer_class = Vendor_Serializer
     lookup_field = "pk"
+
+    def perform_update(self, serializer):
+        return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        return super().perform_destroy(instance)

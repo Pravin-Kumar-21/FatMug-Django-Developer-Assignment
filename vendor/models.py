@@ -1,11 +1,13 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+import uuid
 
 
 class Vendor(models.Model):
     name = models.CharField(max_length=100, blank=False, null=False)
     contact_details = models.TextField(max_length=100, blank=False, null=False)
     address = models.TextField(max_length=100, blank=False, null=False)
+    vendor_code = models.CharField(max_length=20, unique=True, blank=True)
     on_time_delivery_rate = models.FloatField(
         null=False, blank=False, verbose_name="On time delivery Percentage"
     )
@@ -26,6 +28,15 @@ class Vendor(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.vendor_code:
+            self.vendor_code = self.generate_unique_vendor_code()
+        super().save(*args, **kwargs)
+
+    def generate_unique_vendor_code(self):
+        short = self.name[:5]
+        return short + str(uuid.uuid4().hex[:6]).upper()
 
 
 class Performance(models.Model):
