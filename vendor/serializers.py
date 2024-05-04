@@ -3,6 +3,8 @@ from .models import Vendor
 
 
 class Vendor_Serializer(serializers.ModelSerializer):
+    vendor_code = serializers.CharField(read_only=True)
+
     class Meta:
         model = Vendor
         fields = [
@@ -11,7 +13,6 @@ class Vendor_Serializer(serializers.ModelSerializer):
             "vendor_code",
             "contact_details",
             "address",
-            # "on_time_delivery_rate",
             # "quality_rating_avg",
             # "average_respose_time",
             # "fulfillment_rate",

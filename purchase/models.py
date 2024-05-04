@@ -1,6 +1,9 @@
 from django.db import models
 from vendor import models as vendor_models
 from django.core.validators import MinValueValidator, MaxValueValidator
+import uuid
+from django.utils import timezone
+from datetime import timedelta
 
 
 # Create your models here.
@@ -14,7 +17,11 @@ class Purchase(models.Model):
         (cancelled, "Cancelled"),
     )
     po_number = models.CharField(
-        max_length=100, null=False, verbose_name="Unique Product Order No"
+        max_length=100,
+        null=True,
+        blank=True,
+        verbose_name="Unique Product Order No",
+        help_text="Will be alloted automatically once the Order is  Created",
     )
     vendor = models.ForeignKey(
         vendor_models.Vendor,
@@ -31,7 +38,7 @@ class Purchase(models.Model):
     )
     delivery_date = models.DateTimeField(
         blank=False,
-        auto_now=True,
+        auto_now=False,
         auto_now_add=False,
         verbose_name="Expected Delivery Date",
     )
@@ -43,15 +50,21 @@ class Purchase(models.Model):
     )
 
     def json_data(self):
+        vendor_name = self.vendor.name if self.vendor else None
+        order_date_str = (
+            self.order_date.isoformat()
+            if self.order_date
+            else timezone.now().date().isoformat()
+        )
+
         return {
             "Order No": self.po_number,
-            "Vendor Name": self.vendor,
-            "Order Date": self.order_date,
+            "Vendor Name": vendor_name,
+            "Order Date": order_date_str,
             "Quantity": self.quantity,
-            "Delivery Date": self.delivery_date,
         }
 
-    items = models.JSONField(default=dict, null=True, blank=True)
+    items = models.JSONField(null=True, blank=True)
     quality_rating = models.FloatField(
         null=True,
         validators=[MinValueValidator(0.0), MaxValueValidator(5.0)],
@@ -65,3 +78,15 @@ class Purchase(models.Model):
 
     def __str__(self):
         return self.po_number
+
+    def save(self, *args, **kwargs):
+        if not self.po_number:
+            self.po_number = self.generate_unique_po_number()
+        if not self.items:
+            self.items = self.json_data()
+        if self.order_date is not None and self.delivery_date is None:
+            self.delivery_date = self.order_date + timedelta(days=6)
+        super().save(*args, **kwargs)
+
+    def generate_unique_po_number(self):
+        return str(uuid.uuid4().hex[:6]).upper()
