@@ -7,9 +7,9 @@ from vendor.serializers import Vendor_Serializer, PerformanceSerializer
 from rest_framework.response import responses, Response
 from purchase.models import Purchase
 from django.db.models import Avg
-from datetime import timezone
+from django.utils import timezone
 from rest_framework import serializers, status
-import datetime
+from datetime import timedelta
 from rest_framework.views import APIView
 from django.db.models import Avg, Count
 
@@ -52,16 +52,19 @@ class PerformanceDataView(APIView):
         )
 
         if not historical_performance_instance:
-
-            return Response(
-                {"error": "Historical performance not found"},
-                status=status.HTTP_404_NOT_FOUND,
+            historical_performance_instance = HistoricalPerformance.objects.create(
+                vendor=vendor,
+                quality_rating_avg=get_quality_rating_avg(vendor),
+                fulfillment_rate=get_fulfillment_rate(vendor),
+                # average_response_time=get_average_response_time(vendor),
+                on_time_delivery_rate=get_on_time_delivery_rate(vendor),
             )
 
         serializer = PerformanceSerializer(historical_performance_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, pk):
+
         vendor = self.get_vendor(pk)
         historical_performance_instance = self.get_historical_performance_instance(
             vendor
@@ -75,9 +78,9 @@ class PerformanceDataView(APIView):
             historical_performance_instance.fulfillment_rate = get_fulfillment_rate(
                 vendor
             )
-            # historical_performance_instance.average_response_time = (
-            #     get_average_response_time(vendor)
-            # )
+            historical_performance_instance.average_response_time = (
+                get_average_response_time(vendor)
+            )
             historical_performance_instance.on_time_delivery_rate = (
                 get_on_time_delivery_rate(vendor)
             )
@@ -98,15 +101,17 @@ class PerformanceDataView(APIView):
 
 #  Backend Logic Created
 def get_on_time_delivery_rate(obj):
-    completed_orders = Purchase.objects.filter(vendor=obj, status="completed")
-    total_orders = Purchase.objects.filter(vendor=obj)
-    on_time_delivery_rate = (
-        completed_orders.filter(delivery_date__lte=timezone.now()).count()
-        / completed_orders.count()
-        * 100
-        if completed_orders.count() > 0
-        else 0
-    )
+
+    # Query completed purchase orders for the specified vendor
+    completed_orders = Purchase.objects.filter(vendor=obj, status=Purchase.completed)
+
+    if completed_orders.exists():
+        on_time_deliveries = completed_orders.filter(
+            delivery_date__gte=timezone.now()
+        ).count()
+        on_time_delivery_rate = (on_time_deliveries / completed_orders.count()) * 100
+    else:
+        on_time_delivery_rate = 0
     return on_time_delivery_rate
 
 
@@ -125,18 +130,39 @@ def get_quality_rating_avg(obj):
     return None
 
 
-# def get_average_response_time(obj):
-#     completed_orders = Purchase.objects.filter(vendor=obj, status="completed")
-#     total_orders = Purchase.objects.filter(vendor=obj)
+def get_average_response_time(obj):
+    # Query acknowledged purchase orders for the specified vendor
+    import pdb
 
-#     return response_times
+    pdb.set_trace()
+    acknowledged_orders = Purchase.objects.filter(vendor=obj, status=Purchase.completed)
+
+    if acknowledged_orders.exists():
+        total_response_time = timedelta()  # Initialize total response time
+        num_orders = 0
+
+        for order in acknowledged_orders:
+            if order.issue_date and order.acknowledgement_date:
+                response_time = order.acknowledgement_date - order.issue_date
+                total_response_time += response_time
+                num_orders += 1
+
+        if num_orders > 0:
+            average_response_time = total_response_time / num_orders
+            return (
+                average_response_time.total_seconds() / 3600
+            )  # Return average in hours
+    else:
+        return None  # Return None if no acknowledged orders exist
 
 
 def get_fulfillment_rate(obj):
-    completed_orders = Purchase.objects.filter(vendor=obj, status="completed")
+    completed_orders = Purchase.objects.filter(vendor=obj, status=Purchase.completed)
     total_orders = Purchase.objects.filter(vendor=obj)
     fulfilment_rate = (
-        completed_orders.filter(status="completed").count() / total_orders.count() * 100
+        completed_orders.filter(status=Purchase.completed).count()
+        / total_orders.count()
+        * 100
         if total_orders.count() > 0
         else 0
     )
