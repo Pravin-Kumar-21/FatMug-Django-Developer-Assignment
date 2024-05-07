@@ -59,7 +59,21 @@ class PerformanceDataView(APIView):
                 # average_response_time=get_average_response_time(vendor),
                 on_time_delivery_rate=get_on_time_delivery_rate(vendor),
             )
-
+        if historical_performance_instance:
+            # Update existing historical performance instance
+            historical_performance_instance.quality_rating_avg = get_quality_rating_avg(
+                vendor
+            )
+            historical_performance_instance.fulfillment_rate = get_fulfillment_rate(
+                vendor
+            )
+            historical_performance_instance.average_response_time = (
+                get_average_response_time(vendor)
+            )
+            historical_performance_instance.on_time_delivery_rate = (
+                get_on_time_delivery_rate(vendor)
+            )
+            historical_performance_instance.save()
         serializer = PerformanceSerializer(historical_performance_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -132,9 +146,6 @@ def get_quality_rating_avg(obj):
 
 def get_average_response_time(obj):
     # Query acknowledged purchase orders for the specified vendor
-    import pdb
-
-    pdb.set_trace()
     acknowledged_orders = Purchase.objects.filter(vendor=obj, status=Purchase.completed)
 
     if acknowledged_orders.exists():

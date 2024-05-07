@@ -56,9 +56,7 @@ class Purchase(models.Model):
         blank=False,
         auto_now=True,
     )
-    acknowledgement_date = models.DateTimeField(
-        blank=True, null=True, auto_now_add=True
-    )
+    acknowledgement_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.po_number
@@ -68,11 +66,6 @@ class Purchase(models.Model):
             self.po_number = self.generate_unique_po_number()
             self.delivery_date = self.order_date + timedelta(days=3)
             self.items = self.json_data()
-            if self.status != self.completed:
-                self.status = self.completed
-                self.performance.update_on_time_delivery_rate()
-                self.acknowledgement_date = timezone.now()
-                self.performance.update_average_response_time()
         super().save(*args, **kwargs)
 
     def json_data(self):

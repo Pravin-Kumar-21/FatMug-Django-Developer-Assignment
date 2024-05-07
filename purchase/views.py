@@ -6,7 +6,9 @@ from rest_framework.response import responses, Response
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from datetime import timezone
+from django.utils import timezone
+from vendor.views import PerformanceDataView
+from django.http import Http404
 
 
 # Create your views here.
@@ -32,3 +34,41 @@ class PurchaseOrderDetail(
 
     def perform_destroy(self, instance):
         return super().perform_destroy(instance)
+
+
+class AcknowledgePurchaseOrder(APIView):
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            purchase_order = get_object_or_404(Purchase, id=pk)
+        except Http404:
+            return Response(
+                {"detail": "Purchase order not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if purchase_order.acknowledgement_date:
+            return Response(
+                {"detail": "Purchase order already acknowledged."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        purchase_order.acknowledgement_date = timezone.now()
+        purchase_order.status = Purchase.completed
+        purchase_order.save()
+
+        try:
+            performance_view = PerformanceDataView()
+            response = performance_view.get(request, pk=purchase_order.vendor.pk)
+            if response.status_code != status.HTTP_200_OK:
+                return response  # Return performance data response if status is not OK
+
+        except Exception as e:
+            return Response(
+                {"detail": f"Error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(
+            {"detail": "Purchase order acknowledged successfully."},
+            status=status.HTTP_200_OK,
+        )

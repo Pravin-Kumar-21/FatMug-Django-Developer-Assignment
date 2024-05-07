@@ -14,4 +14,9 @@ urlpatterns = [
         views.PurchaseOrderDetail.as_view(),
         name="detail_purchase",
     ),
+    path(
+        "purchase_orders/<int:pk>/acknowledge/",
+        views.AcknowledgePurchaseOrder.as_view(),
+        name="acknowlegde",
+    ),
 ]
