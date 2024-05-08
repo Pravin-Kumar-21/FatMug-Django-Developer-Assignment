@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .models import Purchase
@@ -9,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from vendor.views import PerformanceDataView
 from django.http import Http404
+from .filters import PurchaseFilter
 
 
 # Create your views here.
@@ -17,6 +19,8 @@ class ListCreateAPIView(generics.ListCreateAPIView):
     queryset = Purchase.objects.all()
     serializer_class = Purchase_Serializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PurchaseFilter
 
     def perform_create(self, serializer):
         return super().perform_create(serializer)
