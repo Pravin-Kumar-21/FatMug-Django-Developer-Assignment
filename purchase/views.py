@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from .models import Purchase
 from purchase.serializers import Purchase_Serializer
 from rest_framework.response import responses, Response
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -13,8 +13,10 @@ from django.http import Http404
 
 # Create your views here.
 class ListCreateAPIView(generics.ListCreateAPIView):
+
     queryset = Purchase.objects.all()
     serializer_class = Purchase_Serializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         return super().perform_create(serializer)
@@ -28,6 +30,7 @@ class PurchaseOrderDetail(
     queryset = Purchase.objects.all()
     serializer_class = Purchase_Serializer
     lookup_field = "pk"
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_update(self, serializer):
         return super().perform_update(serializer)
@@ -37,6 +40,8 @@ class PurchaseOrderDetail(
 
 
 class AcknowledgePurchaseOrder(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request, pk, *args, **kwargs):
         try:
             purchase_order = get_object_or_404(Purchase, id=pk)

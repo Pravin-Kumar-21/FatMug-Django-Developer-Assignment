@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
-from rest_framework import generics, mixins, authentication
+from rest_framework import generics, mixins, authentication, permissions
 from .models import Vendor, HistoricalPerformance
 from vendor.serializers import Vendor_Serializer, PerformanceSerializer
 from rest_framework.response import responses, Response
@@ -17,6 +17,7 @@ from django.db.models import Avg, Count
 class VendorListCreateAPIView(generics.ListCreateAPIView):
     queryset = Vendor.objects.all()
     serializer_class = Vendor_Serializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         return super().perform_create(serializer)
@@ -30,6 +31,7 @@ class VendorDetailApiView(
     queryset = Vendor.objects.all()
     serializer_class = Vendor_Serializer
     lookup_field = "pk"
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_update(self, serializer):
         return super().perform_update(serializer)
@@ -39,6 +41,8 @@ class VendorDetailApiView(
 
 
 class PerformanceDataView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_vendor(self, pk):
         return get_object_or_404(Vendor, pk=pk)
 
@@ -126,7 +130,7 @@ def get_on_time_delivery_rate(obj):
         on_time_delivery_rate = (on_time_deliveries / completed_orders.count()) * 100
     else:
         on_time_delivery_rate = 0
-    return on_time_delivery_rate
+    return round(on_time_delivery_rate, 2)
 
 
 def get_quality_rating_avg(obj):
@@ -139,7 +143,7 @@ def get_quality_rating_avg(obj):
         )
         num_ratings = purchases.count()
         if num_ratings > 0:
-            return total_rating / num_ratings
+            return round(total_rating / num_ratings, 2)
 
     return None
 
@@ -160,8 +164,8 @@ def get_average_response_time(obj):
 
         if num_orders > 0:
             average_response_time = total_response_time / num_orders
-            return (
-                average_response_time.total_seconds() / 3600
+            return abs(
+                round((average_response_time.total_seconds() / 3600), 2)
             )  # Return average in hours
     else:
         return None  # Return None if no acknowledged orders exist
@@ -177,4 +181,4 @@ def get_fulfillment_rate(obj):
         if total_orders.count() > 0
         else 0
     )
-    return fulfilment_rate
+    return round(fulfilment_rate, 2)

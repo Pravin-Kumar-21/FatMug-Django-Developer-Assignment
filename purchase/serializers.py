@@ -8,6 +8,7 @@ class Purchase_Serializer(serializers.ModelSerializer):
     po_number = serializers.CharField(read_only=True)
     items = serializers.JSONField(read_only=True)
     delivery_date = serializers.DateTimeField(read_only=True)
+    status = serializers.CharField(read_only=True)
 
     class Meta:
         model = Purchase
