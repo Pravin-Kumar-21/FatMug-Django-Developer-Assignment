@@ -88,27 +88,40 @@ This Django project implements a Vendor Management System with performance metri
 
 <h3>Some ScreenShots</h3>
 <h4>Purchase Api</h4>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/1.png
-<br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/2.png
-<br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/3.png
-<br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/4.png
-<br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/5.png
-<br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/6.png
+
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/1.png)
 <br>
 <br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/2.png)
+<br>
+<br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/3.png)
+<br>
+<br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/4.png)
+<br>
+<br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/5.png)
+<br>
+<br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/6.png)
+<br>
+<br>
+
 <h4> Vendor Api </h4>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/1.png
+
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/1.png)
 <br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/2.png
 <br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/3.png
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/2.png)
 <br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/4.png
 <br>
-https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/7.png
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/3.png)
+<br>
+<br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Vendor/4.png)
+<br>
+<br>
+![alt text](https://github.com/Pravin-Kumar-21/FatMug-Django-Developer-Assignment/blob/master/Live%20Pictures/Purchase/7.png)
+<br>
 <br>
